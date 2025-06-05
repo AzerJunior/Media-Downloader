@@ -3,9 +3,9 @@ import json
 import os
 from constants import (
     SETTINGS_FILE, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE_NAME,
-    DEFAULT_PLAYER_COMMAND
+    DEFAULT_PLAYER_COMMAND, DEFAULT_HISTORY_ITEM_SIZE_NAME # NEW: Import new default
 )
-import time # NEW: Import time module for timestamps
+import time
 
 def get_default_settings():
     """Returns a dictionary of default application settings."""
@@ -24,9 +24,10 @@ def get_default_settings():
         "auto_paste_on_focus": True,
         "global_hotkey_enabled": False,
         "global_hotkey_combination": "<ctrl>+<shift>+D",
-        # NEW: Dependency check state
-        "last_deps_check_timestamp": 0.0, # Unix timestamp of last successful critical check
-        "app_version_at_last_deps_check": "0.0.0" # To force re-check on major updates
+        "last_deps_check_timestamp": 0.0,
+        "app_version_at_last_deps_check": "0.0.0",
+        # NEW: History/Active Item Size
+        "history_item_size_name": DEFAULT_HISTORY_ITEM_SIZE_NAME # Add new setting
     }
 
 def load_settings():
@@ -36,18 +37,18 @@ def load_settings():
             with open(SETTINGS_FILE, 'r') as f:
                 loaded_settings = json.load(f)
                 defaults = get_default_settings()
-                # Ensure all default keys are present in loaded settings (for new settings)
                 for key, default_value in defaults.items():
                     if key not in loaded_settings:
                         loaded_settings[key] = default_value
-                    # NEW: Type coercion for `last_deps_check_timestamp` if it was accidentally saved as something else
                     if key == "last_deps_check_timestamp" and not isinstance(loaded_settings[key], (int, float)):
                          loaded_settings[key] = 0.0
-                    # NEW: Type coercion for `app_version_at_last_deps_check` if it was accidentally saved as something else
                     if key == "app_version_at_last_deps_check" and not isinstance(loaded_settings[key], str):
                          loaded_settings[key] = "0.0.0"
+                    # NEW: Ensure history_item_size_name is a string
+                    if key == "history_item_size_name" and not isinstance(loaded_settings[key], str):
+                         loaded_settings[key] = DEFAULT_HISTORY_ITEM_SIZE_NAME
                 return loaded_settings
-        return get_default_settings() # If file doesn't exist or is empty, return all defaults
+        return get_default_settings()
     except (json.JSONDecodeError, IOError) as e:
         print(f"Error loading settings from {SETTINGS_FILE}: {e}. Using defaults.")
         return get_default_settings()

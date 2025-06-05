@@ -49,7 +49,7 @@ class AboutWindow(ctk.CTkToplevel):
         # Author/Credits
         ctk.CTkLabel(
             main_frame,
-            text="Developed by: T3 Chat",
+            text="Developed by: MrAether/AzerJunior With T3 Chat",
             font=self.app.ui_font,
             text_color="gray",
             pady=5

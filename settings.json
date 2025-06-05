@@ -1,6 +1,6 @@
 {
-    "download_directory": "C:\\Users\\David/Downloads",
-    "appearance_mode": "System",
+    "download_directory": "C:/Users/David/Downloads/Youtube Videos",
+    "appearance_mode": "Dark",
     "color_theme": "blue",
     "default_download_type": "Video",
     "font_family": "Roboto",
@@ -14,5 +14,6 @@
     "global_hotkey_enabled": false,
     "global_hotkey_combination": "<ctrl>+<shift>+D",
     "last_deps_check_timestamp": 1749081809.2019575,
-    "app_version_at_last_deps_check": "0.3.1"
+    "app_version_at_last_deps_check": "0.3.1",
+    "history_item_size_name": "Compact"
 }
