@@ -31,7 +31,7 @@ class AboutWindow(ctk.CTkToplevel):
         # Version
         ctk.CTkLabel(
             main_frame,
-            text="Version: v0.3.0",
+            text="Version: v0.4.0",
             font=self.app.ui_font,
             pady=5
         ).pack()

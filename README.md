@@ -1,8 +1,5 @@
 # Universal Media Downloader
 
-![App Screenshot Placeholder](https://via.placeholder.com/600x400?text=App+Screenshot+Here)
-*(Replace this with an actual screenshot of your application)*
-
 ## Table of Contents
 
 1.  [About](#about)
@@ -165,14 +162,8 @@ Contributions are welcome! If you find a bug, have a feature request, or want to
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
 
-Please ensure your code adheres to existing style and passes basic tests.
-
-## 6. License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-*(Create a LICENSE file in your project root with the MIT License text)*
-
-## 7. Credits
+Please ensure your code adheres to existing style and passes basic testss
+## 6. Credits
 
 *   Developed by: Your Name / Your GitHub Handle / T3 Chat
 *   Built with [Python](https://www.python.org/)
