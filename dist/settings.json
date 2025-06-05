@@ -1,0 +1,18 @@
+{
+    "download_directory": "C:/Users/David/Downloads/Youtube Videos",
+    "appearance_mode": "System",
+    "color_theme": "blue",
+    "default_download_type": "Video",
+    "font_family": "Segoe UI",
+    "font_size_name": "Medium",
+    "player_command": "",
+    "selected_format_code": "best",
+    "download_subtitles": false,
+    "subtitle_languages": "en",
+    "embed_subtitles": true,
+    "auto_paste_on_focus": true,
+    "global_hotkey_enabled": false,
+    "global_hotkey_combination": "<ctrl>+<shift>+D",
+    "last_deps_check_timestamp": 1749082689.9598167,
+    "app_version_at_last_deps_check": "0.3.1"
+}
