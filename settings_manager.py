@@ -1,9 +1,8 @@
-# settings_manager.py
 import json
 import os
 from constants import (
     SETTINGS_FILE, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE_NAME,
-    DEFAULT_PLAYER_COMMAND, DEFAULT_HISTORY_ITEM_SIZE_NAME # NEW: Import new default
+    DEFAULT_PLAYER_COMMAND, DEFAULT_HISTORY_ITEM_SIZE_NAME, APP_VERSION # Added APP_VERSION
 )
 import time
 
@@ -26,8 +25,8 @@ def get_default_settings():
         "global_hotkey_combination": "<ctrl>+<shift>+D",
         "last_deps_check_timestamp": 0.0,
         "app_version_at_last_deps_check": "0.0.0",
-        # NEW: History/Active Item Size
-        "history_item_size_name": DEFAULT_HISTORY_ITEM_SIZE_NAME # Add new setting
+        "history_item_size_name": DEFAULT_HISTORY_ITEM_SIZE_NAME,
+        "show_download_complete_popup": True
     }
 
 def load_settings():
@@ -37,16 +36,22 @@ def load_settings():
             with open(SETTINGS_FILE, 'r') as f:
                 loaded_settings = json.load(f)
                 defaults = get_default_settings()
+                
+                # Update loaded settings with any new default keys
                 for key, default_value in defaults.items():
                     if key not in loaded_settings:
                         loaded_settings[key] = default_value
-                    if key == "last_deps_check_timestamp" and not isinstance(loaded_settings[key], (int, float)):
-                         loaded_settings[key] = 0.0
-                    if key == "app_version_at_last_deps_check" and not isinstance(loaded_settings[key], str):
-                         loaded_settings[key] = "0.0.0"
-                    # NEW: Ensure history_item_size_name is a string
-                    if key == "history_item_size_name" and not isinstance(loaded_settings[key], str):
-                         loaded_settings[key] = DEFAULT_HISTORY_ITEM_SIZE_NAME
+                
+                # Ensure data types for critical settings
+                if not isinstance(loaded_settings.get("last_deps_check_timestamp"), (int, float)):
+                    loaded_settings["last_deps_check_timestamp"] = 0.0
+                if not isinstance(loaded_settings.get("app_version_at_last_deps_check"), str):
+                    loaded_settings["app_version_at_last_deps_check"] = "0.0.0"
+                if not isinstance(loaded_settings.get("history_item_size_name"), str):
+                    loaded_settings["history_item_size_name"] = DEFAULT_HISTORY_ITEM_SIZE_NAME
+                if not isinstance(loaded_settings.get("show_download_complete_popup"), bool):
+                    loaded_settings["show_download_complete_popup"] = True # Default to True if not boolean
+
                 return loaded_settings
         return get_default_settings()
     except (json.JSONDecodeError, IOError) as e:

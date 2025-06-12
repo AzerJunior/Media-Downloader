@@ -3,15 +3,15 @@ import os
 import sys
 
 # --- Application Version ---
-APP_VERSION = "0.3.1"
+APP_VERSION = "0.4.1" # Updated version for these fixes
 
 # --- File/Path Constants ---
 SETTINGS_FILE = "settings.json"
 
-# Determine PROJECT_ROOT robustly for both development and PyInstaller bundle
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     PROJECT_ROOT = sys._MEIPASS
 else:
+    # This assumes constants.py is in the project's root directory
     PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 # --- Media Extensions ---
@@ -32,28 +32,26 @@ MSG_DOWNLOAD_CANCELLED_SIGNAL = "DOWNLOAD_CANCELLED_SIGNAL"
 MSG_DOWNLOAD_ITEM_UPDATE = "DOWNLOAD_ITEM_UPDATE"
 MSG_DOWNLOAD_ITEM_STATUS = "DOWNLOAD_ITEM_STATUS"
 MSG_DOWNLOAD_ITEM_ADDED = "DOWNLOAD_ITEM_ADDED"
+MSG_THUMB_LOADED_FOR_HISTORY = "THUMB_LOADED_FOR_HISTORY"
 
 # --- UI Appearance ---
 THUMBNAIL_SIZE = (128, 72)
 
 # --- External Tools ---
-FFMPEG_TIMEOUT = 30 # Seconds for ffmpeg/ffprobe subprocess timeout
+FFMPEG_TIMEOUT = 30 
 
 # --- Font Options ---
 DEFAULT_FONT_FAMILY = "Segoe UI"
 FONT_FAMILIES = ["Segoe UI", "Calibri", "Arial", "Verdana", "Helvetica", "Roboto", "System"]
 FONT_SIZES = {"Small": 11, "Medium": 13, "Large": 15, "X-Large": 17}
 DEFAULT_FONT_SIZE_NAME = "Medium"
+# Correctly join path using PROJECT_ROOT defined above
 FONT_ROBOTO_REGULAR = os.path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf")
 
-# --- NEW: History/Active Item Sizes ---
-# Defines the vertical padding for history/active download items
-HISTORY_ITEM_SIZES = {
-    "Compact": 2, # Smaller padding
-    "Normal": 5,  # Default padding
-    "Spacious": 10 # More padding
-}
-DEFAULT_HISTORY_ITEM_SIZE_NAME = "Normal" # Default size name
+
+# --- History/Active Item Sizes ---
+HISTORY_ITEM_SIZES = { "Compact": 2, "Normal": 5, "Spacious": 10 }
+DEFAULT_HISTORY_ITEM_SIZE_NAME = "Normal"
 
 # --- Player Settings ---
 DEFAULT_PLAYER_COMMAND = ""

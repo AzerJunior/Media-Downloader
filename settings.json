@@ -13,7 +13,8 @@
     "auto_paste_on_focus": true,
     "global_hotkey_enabled": false,
     "global_hotkey_combination": "<ctrl>+<shift>+D",
-    "last_deps_check_timestamp": 1749081809.2019575,
-    "app_version_at_last_deps_check": "0.3.1",
-    "history_item_size_name": "Compact"
+    "last_deps_check_timestamp": 1749111592.1103392,
+    "app_version_at_last_deps_check": "0.4.1",
+    "history_item_size_name": "Compact",
+    "show_download_complete_popup": false
 }

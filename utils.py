@@ -1,4 +1,3 @@
-# utils.py
 import customtkinter as ctk
 
 def get_ctk_color_from_theme_path(path_string):
@@ -13,8 +12,8 @@ def get_ctk_color_from_theme_path(path_string):
         if part in current_dict:
             current_dict = current_dict[part]
         else:
-            # print(f"Warning: Theme path part '{part}' not found in {path_string}") # Less noisy
-            return "gray" # Default fallback color
+            # print(f"Warning: Theme path part '{part}' not found in {path_string}") # Can uncomment for debugging
+            return "gray" # Default fallback color if path not found
 
     final_color_value = current_dict
 

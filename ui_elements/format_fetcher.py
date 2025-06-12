@@ -1,5 +1,5 @@
-# format_fetcher.py
 import customtkinter as ctk
+import os
 from tkinter import messagebox
 import subprocess
 import sys
@@ -8,7 +8,8 @@ import threading
 import shlex
 
 from constants import FFMPEG_TIMEOUT, MSG_LOG_PREFIX
-from ui_elements.format_selection_window import FormatSelectionWindow # Import the specific window
+# Import the specific window for type hinting or direct usage
+from ui_elements.format_selection_window import FormatSelectionWindow 
 
 
 class FormatFetcher:
@@ -35,25 +36,54 @@ class FormatFetcher:
     def _fetch_formats_thread_target(self, url):
         """Thread target for running yt-dlp to list formats."""
         try:
-            command = [sys.executable, "-m", "yt_dlp", "--list-formats", "--dump-json", url]
+            # Determine yt-dlp executable path for robustness
+            yt_dlp_exe_path = None
+            python_dir = os.path.dirname(sys.executable)
+            scripts_dir = os.path.join(python_dir, "Scripts")
+            user_python_root = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Python")
+            python_version_dir = f"Python{sys.version_info.major}{sys.version_info.minor}"
+            user_scripts_dir = os.path.join(user_python_root, python_version_dir, "Scripts")
+
+            possible_yt_dlp_paths = [
+                os.path.join(scripts_dir, "yt-dlp.exe"),
+                os.path.join(scripts_dir, "yt-dlp"),
+                os.path.join(user_scripts_dir, "yt-dlp.exe"),
+                os.path.join(user_scripts_dir, "yt-dlp"),
+                os.path.join(python_dir, "yt-dlp.exe"),
+            ]
+
+            for path in possible_yt_dlp_paths:
+                if os.path.exists(path):
+                    yt_dlp_exe_path = path
+                    break
+            
+            command_base = []
+            if yt_dlp_exe_path:
+                command_base = [yt_dlp_exe_path]
+            else:
+                command_base = [sys.executable, "-m", "yt_dlp"]
+            
+            command = command_base + ["--list-formats", "--dump-json", url]
+
             self.app.format_info_queue.put(
                 (MSG_LOG_PREFIX, f"Executing for formats: {shlex.join(command)}")
             )
             process = subprocess.Popen(
                 command, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                text=True, encoding='utf-8', errors='replace'
+                text=True, encoding='utf-8', errors='replace',
+                creationflags=0x08000000 if sys.platform.startswith('win') else 0 # CREATE_NO_WINDOW
             )
             stdout, stderr = process.communicate(timeout=FFMPEG_TIMEOUT)
 
             if process.returncode == 0 and stdout:
                 # yt-dlp might output multiple JSON objects for playlists or related.
                 # We typically want the main video's info, often the first one.
+                # Find the first complete JSON object and pass it for parsing.
                 json_lines = [
                     line for line in stdout.strip().splitlines()
                     if line.strip().startswith("{") and line.strip().endswith("}")
                 ]
                 if json_lines:
-                    # Pass only the first valid JSON object as a string
                     self.app.format_info_queue.put(("FORMAT_JSON_DATA", json_lines[0]))
                 else:
                     self.app.format_info_queue.put(
@@ -120,7 +150,7 @@ class FormatFetcher:
             # Sort formats by bitrate (tbr) and then by height (resolution)
             def sort_key(fmt):
                 try:
-                    tbr_val = float(str(fmt.get("tbr", "0")).replace('k', '')) if fmt.get("tbr") and fmt.get("tbr") != '-' else 0
+                    tbr_val = float(str(fmt.get("tbr", "0")).replace('k', '').replace('K','').replace('B/s', '')) if fmt.get("tbr") and fmt.get("tbr") != '-' else 0
                 except ValueError:
                     tbr_val = 0
                 try:
@@ -145,14 +175,3 @@ class FormatFetcher:
             self.app.log_message(f"Error processing formats JSON: {type(e).__name__} - {e}");
             return []
         return parsed_formats_list
-
-    def open_format_selection_window(self, formats_data):
-        """Opens or brings to front the format selection window."""
-        if self.app.format_selection_window_instance is None or not self.app.format_selection_window_instance.winfo_exists():
-            self.app.format_selection_window_instance = FormatSelectionWindow(
-                self.app, self.app, formats_data # master is self.app, app_instance is self.app
-            )
-            self.app.format_selection_window_instance.focus()
-        else:
-            self.app.format_selection_window_instance.lift()
-            self.app.format_selection_window_instance.focus()

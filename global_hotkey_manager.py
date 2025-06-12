@@ -1,4 +1,3 @@
-# global_hotkey_manager.py
 from pynput import keyboard
 import threading
 import time
@@ -25,16 +24,25 @@ class GlobalHotkeyManager:
             self.log_func(f"Global hotkey '{self.hotkey_combination_str}' pressed. Triggering callback.")
             self._last_trigger_time = current_time
             # Execute callback in a separate thread to prevent blocking the listener
+            # The callback itself should typically use app.after() to interact with the GUI
             threading.Thread(target=self.callback_func, daemon=True).start()
         else:
             self.log_func(f"Global hotkey '{self.hotkey_combination_str}' pressed, but debounced.")
 
     def update_hotkey(self, new_hotkey_combination_str):
         """Updates the hotkey combination and restarts the listener."""
-        self.hotkey_combination_str = new_hotkey_combination_str
-        self.log_func(f"Hotkey combination updated to: '{new_hotkey_combination_str}'")
-        self.stop_listener()
-        self.start_listener()
+        # Only update and restart if the hotkey combination actually changed
+        if self.hotkey_combination_str != new_hotkey_combination_str:
+            self.hotkey_combination_str = new_hotkey_combination_str
+            self.log_func(f"Hotkey combination updated to: '{new_hotkey_combination_str}'")
+            self.stop_listener()
+            self.start_listener()
+        else:
+            # If the hotkey is the same, just ensure the listener is running if it should be
+            if self.hotkey_combination_str and self.hotkey_combination_str.lower() != "none" and \
+               not (self.listener_thread and self.listener_thread.is_alive()):
+                self.start_listener()
+
 
     def start_listener(self):
         """Starts the global hotkey listener in a non-blocking thread."""
@@ -69,32 +77,7 @@ class GlobalHotkeyManager:
                 self.log_func(f"Global hotkey listener for '{self.hotkey_combination_str}' stopped.")
             except Exception as e:
                 self.log_func(f"ERROR: Failed to stop hotkey listener: {e}")
-        if self.listener_thread and self.listener_thread.is_alive():
-            # A small delay to allow the thread to properly shut down
-            # Or you might need more robust thread management depending on pynput's internals
-            # self.listener_thread.join(timeout=0.1)
-            pass # Daemon threads will exit with the main app
-
-# Example usage (for testing purposes, remove in main app)
-# if __name__ == '__main__':
-#     def my_callback():
-#         print("Hotkey triggered! Performing action...")
-
-#     def print_log(msg):
-#         print(f"[HotkeyManager Log] {msg}")
-
-#     # hotkey_str = "<ctrl>+<alt>+a" # Example hotkey
-#     hotkey_str = "<cmd>+<shift>+d" # For macOS users, cmd is the 'super' key
-
-#     manager = GlobalHotkeyManager(hotkey_str, my_callback, print_log)
-#     manager.start_listener()
-
-#     print(f"Press {hotkey_str} to trigger the callback. Press Ctrl+C to exit.")
-#     try:
-#         # Keep the main thread alive indefinitely to allow the daemon thread to run
-#         import time
-#         while True:
-#             time.sleep(1)
-#     except KeyboardInterrupt:
-#         manager.stop_listener()
-#         print("Exiting.")
+        
+        # Although daemon threads exit with the main app, explicitly join if needed for cleaner shutdown
+        # if self.listener_thread and self.listener_thread.is_alive():
+        #     self.listener_thread.join(timeout=0.1) # Give it a moment to stop gracefully

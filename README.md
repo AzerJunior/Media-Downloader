@@ -171,4 +171,4 @@ Please ensure your code adheres to existing style and passes basic testss
 *   Downloading powered by [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 *   Media processing facilitated by [FFmpeg](https://ffmpeg.org/)
 *   Global hotkeys handled by [pynput](https://pynput.readthedocs.io/en/latest/)
-*   Clipboard operations handled by [pyperclip](https://pyperclip.readthedocs.io/en/latest/)
+*   Clipboard operations handled by [pyperclip](https://pyperclip.readthedocs.io/en/latest/)git 

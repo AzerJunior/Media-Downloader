@@ -1,4 +1,3 @@
-# dependency_checker.py
 import tkinter as tk
 from tkinter import ttk, messagebox
 import subprocess
@@ -7,15 +6,16 @@ import os
 import importlib.util
 import threading
 import webbrowser
-import time # NEW: Import time for timestamp management
+import time
 
 # Import settings manager and constants
-from settings_manager import load_settings, save_settings # NEW: Import settings functions
-from constants import APP_VERSION, SETTINGS_FILE # NEW: Import APP_VERSION and SETTINGS_FILE
+from settings_manager import load_settings, save_settings
+# CORRECTED: Import FONT_ROBOTO_REGULAR directly from constants
+from constants import APP_VERSION, SETTINGS_FILE, FONT_ROBOTO_REGULAR
 
 
 class DependencyCheckerApp(tk.Tk):
-    def __init__(self, dependencies, initial_settings): # NEW: Accept initial_settings
+    def __init__(self, dependencies, initial_settings):
         super().__init__()
         self.title("Dependency Checker")
         self.geometry("650x550")
@@ -24,11 +24,11 @@ class DependencyCheckerApp(tk.Tk):
         self.dependencies = dependencies
         self.all_critical_installed = True
         self.can_proceed = True
-        self.current_settings = initial_settings # NEW: Store initial settings
+        self.current_settings = initial_settings
 
         self._center_window()
         self._create_widgets()
-        self._check_dependencies() # Initial check
+        self._check_dependencies()  # Initial check
 
     def _center_window(self):
         self.update_idletasks()
@@ -153,25 +153,25 @@ class DependencyCheckerApp(tk.Tk):
             self.continue_button.config(state="normal")
             self.continue_button.config(text="Launch Application")
 
-    def _update_settings_after_check(self): # NEW Method
+    def _update_settings_after_check(self):
         """Updates the settings file with the result of the dependency check."""
         if self.all_critical_installed:
             self.current_settings["last_deps_check_timestamp"] = time.time()
             self.current_settings["app_version_at_last_deps_check"] = APP_VERSION
             print(f"Dependency check successful. Saving timestamp: {self.current_settings['last_deps_check_timestamp']}")
         else:
-            self.current_settings["last_deps_check_timestamp"] = 0.0 # Reset timestamp on failure
-            self.current_settings["app_version_at_last_deps_check"] = "0.0.0" # Reset version
+            self.current_settings["last_deps_check_timestamp"] = 0.0  # Reset timestamp on failure
+            self.current_settings["app_version_at_last_deps_check"] = "0.0.0"  # Reset version
             print("Critical dependencies missing. Resetting dependency check timestamp.")
 
-        save_settings(self.current_settings) # Save the updated settings
+        save_settings(self.current_settings)  # Save the updated settings
 
     def run_install_action(self, action_func, status_label_widget, name_label_widget):
         """Runs an installation action in a new thread."""
         for btn in self.dep_buttons:
             btn.config(state="disabled")
         self.continue_button.config(state="disabled")
-        self.exit_button.config(state="disabled") # Disable exit during install
+        self.exit_button.config(state="disabled")  # Disable exit during install
 
         original_name_text = name_label_widget.cget("text")
         status_label_widget.config(text="INSTALLING...", foreground="orange")
@@ -199,8 +199,8 @@ class DependencyCheckerApp(tk.Tk):
             error_message = f"Installation failed. Please check console for details.\n{error_msg}" if error_msg else "Installation failed. Please check console for details."
             messagebox.showerror("Installation Failed", error_message, parent=self)
 
-        self._check_dependencies() # This will re-enable all dep buttons and update final button states
-        self.exit_button.config(state="normal") # Re-enable exit button
+        self._check_dependencies()  # This will re-enable all dep buttons and update final button states
+        self.exit_button.config(state="normal")  # Re-enable exit button
 
     def on_continue(self):
         self.destroy()
@@ -267,7 +267,8 @@ def run_dependency_check(project_root):
     Returns True if dependencies are met and user chooses to proceed, False otherwise.
     Takes `project_root` as an argument to correctly locate relative files.
     """
-    font_file_path = os.path.join(project_root, "assets", "fonts", "Roboto-Regular.ttf")
+    # Use constants.FONT_ROBOTO_REGULAR which is already built using PROJECT_ROOT
+    font_file_path = FONT_ROBOTO_REGULAR 
 
     dependencies = [
         {
