@@ -85,7 +85,11 @@ class DependencyCheckerApp(tk.Tk):
         self.can_proceed = True
         any_missing = False
 
-        self.dep_buttons = [] # Store references to buttons to disable during installation
+        # Clear any existing button references to prevent memory leaks
+        if hasattr(self, 'dep_buttons'):
+            self.dep_buttons.clear()
+        else:
+            self.dep_buttons = []  # Store references to buttons to disable during installation
 
         for i, dep in enumerate(self.dependencies):
             name = dep["name"]

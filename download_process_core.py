@@ -226,7 +226,7 @@ def run_download_process(
                     "status": "starting",
                 },
             ),
-            timeout=0.05,
+            timeout=1.0,
         )
     except queue.Full:
         pass
@@ -308,7 +308,7 @@ def run_download_process(
         download_dir=download_dir,
         output_queue=output_queue,
         generate_thumbnail_func=generate_thumbnail_from_video_logic
-        if download_type == "video"
+        if download_type == "Video"
         else extract_album_art_logic,
         is_playlist_item=is_playlist_item,
         initial_title=url,
