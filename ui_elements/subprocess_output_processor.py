@@ -129,7 +129,7 @@ def _parse_yt_dlp_error_internal(output_lines):
 
 # Constants for internal use
 CREATE_NO_WINDOW = 0x08000000
-QUEUE_PUT_TIMEOUT = 0.05
+QUEUE_PUT_TIMEOUT = 1.0
 MAX_OUTPUT_LINES_FOR_ERROR_PARSE = 1000
 
 

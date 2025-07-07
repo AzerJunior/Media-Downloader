@@ -40,17 +40,22 @@ class FormatFetcher:
             yt_dlp_exe_path = None
             python_dir = os.path.dirname(sys.executable)
             scripts_dir = os.path.join(python_dir, "Scripts")
-            user_python_root = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Python")
-            python_version_dir = f"Python{sys.version_info.major}{sys.version_info.minor}"
-            user_scripts_dir = os.path.join(user_python_root, python_version_dir, "Scripts")
-
+            
             possible_yt_dlp_paths = [
                 os.path.join(scripts_dir, "yt-dlp.exe"),
                 os.path.join(scripts_dir, "yt-dlp"),
-                os.path.join(user_scripts_dir, "yt-dlp.exe"),
-                os.path.join(user_scripts_dir, "yt-dlp"),
                 os.path.join(python_dir, "yt-dlp.exe"),
             ]
+
+            # Add Windows-specific paths only on Windows
+            if sys.platform.startswith("win"):
+                user_python_root = os.path.join(os.path.expanduser("~"), "AppData", "Local", "Programs", "Python")
+                python_version_dir = f"Python{sys.version_info.major}{sys.version_info.minor}"
+                user_scripts_dir = os.path.join(user_python_root, python_version_dir, "Scripts")
+                possible_yt_dlp_paths.extend([
+                    os.path.join(user_scripts_dir, "yt-dlp.exe"),
+                    os.path.join(user_scripts_dir, "yt-dlp"),
+                ])
 
             for path in possible_yt_dlp_paths:
                 if os.path.exists(path):

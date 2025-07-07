@@ -473,9 +473,12 @@ class SettingsWindow(ctk.CTkToplevel):
             except Exception as e:
                 self.app.log_message(f"ERROR: Failed to stop temporary hotkey listener: {e}")
         if self._hotkey_listening_thread and self._hotkey_listening_thread.is_alive():
-            # Not strictly necessary to join a daemon thread, but good practice if you want to ensure it's fully gone
-            # self._hotkey_listening_thread.join(timeout=0.1)
-            pass
+            # Properly clean up the thread to prevent resource leaks
+            try:
+                self._hotkey_listening_thread.join(timeout=0.5)
+            except Exception as e:
+                self.app.log_message(f"Warning: Failed to join hotkey listening thread: {e}")
+            self._hotkey_listening_thread = None
 
     def save_global_hotkey_combination_now(self, new_combination):
         """Saves the hotkey combination immediately to settings."""

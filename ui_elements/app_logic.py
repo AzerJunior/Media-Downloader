@@ -34,7 +34,7 @@ from ui_elements.subprocess_output_processor import SubprocessOutputProcessor
 
 
 MSG_DURATION_DONE = "DURATION_DONE"
-QUEUE_PUT_TIMEOUT = 0.05
+QUEUE_PUT_TIMEOUT = 1.0
 
 # ... (The rest of the AppLogic class remains exactly the same as before) ...
 class AppLogic:
@@ -309,7 +309,20 @@ class AppLogic:
                     )
 
             process.stdout.close()
-            return_code = process.wait()
+            try:
+                return_code = process.wait(timeout=60)  # Add timeout to prevent hanging
+            except subprocess.TimeoutExpired:
+                process.kill()
+                output_queue.put(
+                    f"{MSG_LOG_PREFIX} ERROR: Playlist fetch timed out after 60 seconds."
+                )
+                return None
+            except Exception as e:
+                process.kill()
+                output_queue.put(
+                    f"{MSG_LOG_PREFIX} ERROR: Process error during playlist fetch: {e}"
+                )
+                return None
 
             if return_code != 0:
                 stderr_output = process.stderr.read()
